@@ -90,6 +90,7 @@ public class loginController {
     @RequestMapping(value = "/login111")
     public String login8(@RequestParam("hello") String userName,HttpServletRequest request) {
         request.getSession().setAttribute("user",userName);
+        System.out.println("userName="+userName);
         return "redirect:login0";
     }
 
