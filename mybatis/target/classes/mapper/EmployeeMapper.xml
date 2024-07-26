@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.EmployeeMapper">
+
+    <resultMap id="resultMapEmployee" type="Employee">
+        <id property="id" column="empId"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="salary" column="salary"/>
+        <result property="dept.id" column="deptId"/>
+        <result property="dept.name" column="deptName"/>
+        <!--<result property="dept.name" column="name"/>-->
+        <!--<association property="dept" column="dept_id" select="test.mybatis.mapper.DeptMapper.selectDeptById">-->
+        <!--<association property="dept" javaType="Dept">
+            <id property="id" column="id"/>
+            <result property="name" column="deptName"/>
+        </association>-->
+
+        <!--<association property="dept" resultMap="test.mybatis.mapper.DeptMapper.DeptResultMap"/>-->
+    </resultMap>
+
+    <select id="selectAllEmpByDept" resultMap="resultMapEmployee">
+        SELECT e.id, e.name, age, salary, dept_id, d.id deptId, d.name deptName
+        FROM employee e
+                 INNER JOIN dept d on e.dept_id = d.id
+        WHERE d.name = #{deptName}
+    </select>
+    <select id="selectEmpById" resultMap="resultMapEmployee">
+        SELECT e.id as empId, e.name, age, salary, d.id, d.name as deptName
+        FROM employee e
+                 INNER JOIN dept d on e.dept_id = d.id
+        WHERE e.id = #{empId}
+    </select>
+    <select id="selectAllEmpByPage" resultMap="resultMapEmployee">
+        SELECT e.id as empId, e.name, age, salary, d.name as deptName
+        FROM employee e
+                 INNER JOIN dept d on dept_id = d.id
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <resultMap id="avgSalaryResultMap" type="map">
+        <result property="部门名称" column="name"/>
+        <result property="平均工资" column="avgSalary"/>
+    </resultMap>
+
+    <select id="findAvgSalaryByDept" resultMap="avgSalaryResultMap">
+        SELECT d.name, AVG(salary) as avgSalary
+        FROM employee
+                 INNER JOIN dept d on dept_id = d.id
+        GROUP BY dept_id
+    </select>
+
+    <update id="updateEmployee" parameterType="Employee">
+        UPDATE employee
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name!= null">name #{name},</if>
+            <if test="age!= null and age!= 0">age = #{age}</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+    <insert id="insertEmployee" parameterType="Employee">
+        INSERT INTO employee (name, age, salary, dept_id)
+        VALUES (#{name}, #{age}, #{salary}, #{dept.id})
+    </insert>
+    <select id="selectEmployeeById" parameterType="Employee" resultType="Employee">
+        <bind name="bindName" value="'%'+name+'%'"/>
+        SELECT id, name, age, salary
+        FROM employee
+        <where>
+            <if test="id != null and id != 0">id = #{id}</if>
+            <if test="name != null">and name like #{bindName}</if>
+        </where>
+    </select>
+
+</mapper>

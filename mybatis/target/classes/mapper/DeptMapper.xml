@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="test.mybatis.mapper.DeptMapper">
+    <resultMap id="DeptResultMap" type="bean.Dept">
+        <id property="id" column="deptId"/>
+        <result property="name" column="name"/>
+        <collection property="employees" ofType="Employee">
+            <id property="id" column="empId"/>
+            <result property="name" column="empName"/>
+            <result property="salary" column="salary"/>
+        </collection>
+    </resultMap>
+    <!-- 查询所有部门信息 -->
+    <select id="selectAllDept" parameterType="string" resultType="Dept">
+        SELECT name
+        FROM dept
+        <!--<if test="_parameter != null">-->
+        where name = #{name}
+        <!--  </if>-->
+    </select>
+    <!-- 根据部门ID查询部门信息 -->
+    <select id="selectDeptById" resultType="Dept">
+        SELECT *
+        FROM dept
+        WHERE id = #{id}
+    </select>
+    <!--查询所以部门的员工信息-->
+    <select id="selectDeptEmployees" resultMap="DeptResultMap">
+        select  d.name, e.name as empName, e.salary
+        from dept d
+        left join employee e on d.id = e.dept_id
+    </select>
+
+</mapper>
