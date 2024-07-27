@@ -91,9 +91,6 @@ public class loginController {
     public String login8(@RequestParam("hello") String userName,HttpServletRequest request) {
         request.getSession().setAttribute("user",userName);
         System.out.println("userName="+userName);
-        System.out.println("hhhhh");
-        System.out.println("xxxxx");
-        System.out.println("hello");
         return "redirect:login0";
     }
 
