@@ -92,6 +92,7 @@ public class loginController {
         request.getSession().setAttribute("user",userName);
         System.out.println("userName="+userName);
         System.out.println("hhhhh");
+        System.out.println("xxxxx");
         return "redirect:login0";
     }
 
